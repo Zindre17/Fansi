@@ -50,22 +50,24 @@ public record Stats
         }
 
         var stat = stats[0];
-        Hp = new(stat.Base_Stat, stat.Effort);
+        Hp = new(stat.Base_Stat, stat.Effort, nameof(Hp).ToUpper());
 
         stat = stats[1];
-        Attack = new(stat.Base_Stat, stat.Effort);
+        Attack = new(stat.Base_Stat, stat.Effort, nameof(Attack));
 
         stat = stats[2];
-        Defence = new(stat.Base_Stat, stat.Effort);
+        Defence = new(stat.Base_Stat, stat.Effort, nameof(Defence));
 
         stat = stats[3];
-        SpecialAttack = new(stat.Base_Stat, stat.Effort);
+        SpecialAttack = new(stat.Base_Stat, stat.Effort, "Sp. Attack");
 
         stat = stats[4];
-        SpecialDefence = new(stat.Base_Stat, stat.Effort);
+        SpecialDefence = new(stat.Base_Stat, stat.Effort, "Sp. Defence");
 
         stat = stats[5];
-        Speed = new(stat.Base_Stat, stat.Effort);
+        Speed = new(stat.Base_Stat, stat.Effort, nameof(Speed));
+
+        Sum = new(stats.Sum(s => s.Base_Stat), stats.Sum(s => s.Effort), "Sum");
     }
 
     public Stat Hp { get; init; }
@@ -74,9 +76,10 @@ public record Stats
     public Stat SpecialAttack { get; init; }
     public Stat SpecialDefence { get; init; }
     public Stat Speed { get; init; }
+    public Stat Sum { get; init; }
 }
 
-public record Stat(int Value, int Effort);
+public record Stat(int Value, int Effort, string Name);
 
 public record PokemonResponse
 {
