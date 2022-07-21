@@ -2,143 +2,144 @@ namespace Monline;
 
 public static class Printer
 {
+    private readonly static Color mainBackground = new(40, 40, 40);
+    private readonly static Color secondaryBackground = new(60, 60, 60);
+
     public static void PrintPokemon(params Pokemon[] mons)
     {
-        const int width = 30;
-
-        var builder = new ConsoleOutputBuilder(10);
+        var consoleAreas = new ConsoleArea[mons.Length];
         for (int i = 0; i < mons.Length; i++)
         {
-            bool isEven = (i % 2) is 0;
-            var mainColor = isEven ? ConsoleColor.White : ConsoleColor.Black;
-            var secColor = isEven ? ConsoleColor.Black : ConsoleColor.White;
+            consoleAreas[i] = new ConsoleArea(14, 30)
+            {
+                Common = new()
+                {
+                    Background = i % 2 is 0 ? mainBackground : secondaryBackground,
+                    Foreground = Color.White,
+                }
+            };
+        }
+
+        for (int i = 0; i < mons.Length; i++)
+        {
+            var console = consoleAreas[i];
             var mon = mons[i];
 
-            builder
-                .AddOutput(0, GetBlock(mainColor, width))
-                .AddOutput(1, new(GetCentered(mon.Name.Capitalized(), width), secColor, mainColor))
-                .AddOutput(2, GetBlock(mainColor, width))
+            console[0].Fill(new(""));
+            console[1].Fill(new(mon.Name.Capitalized())
+            {
+                Bold = true,
+                Alignment = TextAlignment.Center,
+            });
+            console[2].Fill(new(""));
 
-                .AddOutput(3, new(GetCentered(mon.Types[0].Capitalized(), width / mon.Types.Length), ConsoleColor.Black, TranslateTypeToColor(mon.Types[0])));
+            var typeFormat = new ConsoleOutput
+            {
+                Italics = true,
+                Alignment = TextAlignment.Center,
+            };
+
+            console[3].AddSegment(
+                typeFormat with
+                {
+                    Text = mon.Types[0].Capitalized(),
+                    Background = TranslateTypeToColor(mon.Types[0])
+                },
+                1d / mon.Types.Length
+            );
 
             if (mon.Types.Length > 1)
             {
-                builder.AddOutput(3, new(GetCentered(mon.Types[1].Capitalized(), width / 2), ConsoleColor.Black, TranslateTypeToColor(mon.Types[1])));
+                console[3].AddSegment(
+                    typeFormat with
+                    {
+                        Text = mon.Types[1].Capitalized(),
+                        Background = TranslateTypeToColor(mon.Types[1])
+                    },
+                    0.5
+                );
             }
 
-            builder
-                .AddOutput(4, new(GetStatText("HP", mon.Stats.Hp), mainColor, secColor))
-                .AddOutput(5, new(GetStatText("Attack", mon.Stats.Attack), secColor, mainColor))
-                .AddOutput(6, new(GetStatText("Defence", mon.Stats.Defence), mainColor, secColor))
-                .AddOutput(7, new(GetStatText("Sp. Attack", mon.Stats.SpecialAttack), secColor, mainColor))
-                .AddOutput(8, new(GetStatText("Sp. Defence", mon.Stats.SpecialDefence), mainColor, secColor))
-                .AddOutput(9, new(GetStatText("Speed", mon.Stats.Speed), secColor, mainColor));
+            var isEven = i % 2 is 0;
+            AddStat(console[4], mon.Stats.Hp, isEven ? mainBackground : secondaryBackground);
+            AddStat(console[5], mon.Stats.Attack, isEven ? secondaryBackground : mainBackground);
+            AddStat(console[6], mon.Stats.Defence, isEven ? mainBackground : secondaryBackground);
+            AddStat(console[7], mon.Stats.SpecialAttack, isEven ? secondaryBackground : mainBackground);
+            AddStat(console[8], mon.Stats.SpecialDefence, isEven ? mainBackground : secondaryBackground);
+            AddStat(console[9], mon.Stats.Speed, isEven ? secondaryBackground : mainBackground);
 
+            console[10].Fill(new(""));
+
+            AddStat(console[11], mon.Stats.Sum, isEven ? secondaryBackground : mainBackground);
+
+            console[12].Fill(new(""));
+            console[13].Fill(new(""));
         }
 
-        builder.Print();
+        for (int i = 0; i < 14; i++)
+        {
+            foreach (var console in consoleAreas)
+            {
+                console.PrintRow(i);
+            }
+            Console.WriteLine();
+        }
     }
 
-    private static string GetCentered(string text, int width)
+    private static void AddStat(ConsoleRow row, Stat stat, Color background)
     {
-        var padCount = width - text.Length;
-        var leftPadCount = padCount / 2;
-        var leftPad = new string(' ', leftPadCount);
-        var rightPad = new string(' ', leftPadCount + (padCount % 2));
+        row.Common = row.Common with
+        {
+            Background = background
+        };
 
-        return $"{leftPad}{text}{rightPad}";
+        row.AddSegment(
+            new(stat.Name)
+            {
+                Alignment = TextAlignment.Right,
+                PaddingRight = 1,
+            },
+            .5
+        );
+        row.AddSegment(
+            new($"{stat.Value}")
+            {
+                Alignment = TextAlignment.Right,
+                Width = 4
+            }
+        );
+        row.AddSegment(
+            new(stat.Effort > 0 ? $"+{stat.Effort}" : "")
+            {
+                PaddingLeft = 1,
+            }
+        );
     }
 
-    private static Output GetBlock(ConsoleColor color, int width)
+    public static Color TranslateTypeToColor(string type)
     {
-        return new(new(' ', width), Background: color);
-    }
-
-    private static string GetStatText(string name, Stat stat)
-    {
-        return $"    {name,-14}{stat.Value,8}{(stat.Effort > 0 ? $"+{stat.Effort}" : ""),3} ";
-    }
-
-    public static ConsoleColor TranslateTypeToColor(string type)
-    {
+        // Grabbed from Serebii.net
         return type switch
         {
-            "normal" => ConsoleColor.White,
-            "fire" => ConsoleColor.DarkRed,
-            "water" => ConsoleColor.Blue,
-            "grass" => ConsoleColor.Green,
-            "electric" => ConsoleColor.Yellow,
-            "ice" => ConsoleColor.Cyan,
-            "poison" => ConsoleColor.Magenta,
-            "ground" => ConsoleColor.Red,
-            "rock" => ConsoleColor.DarkGray,
-            "flying" => ConsoleColor.Gray,
-            "bug" => ConsoleColor.DarkGreen,
-            "psychic" => ConsoleColor.Magenta,
-            "steel" => ConsoleColor.White,
-            "dark" => ConsoleColor.DarkMagenta,
-            "dragon" => ConsoleColor.DarkCyan,
-            "fighting" => ConsoleColor.Red,
-            "fairy" => ConsoleColor.Magenta,
+            "normal" => new(0xad, 0xa5, 0x94),
+            "fire" => new(0xf7, 0x52, 0x31),
+            "water" => new(0x39, 0x9c, 0xff),
+            "grass" => new(0x7b, 0xce, 0x52),
+            "electric" => new(0xff, 0xc6, 0x31),
+            "ice" => new(0x5a, 0xce, 0xe7),
+            "poison" => new(0xb5, 0x5a, 0xa5),
+            "ground" => new(0xd6, 0xb5, 0x5a),
+            "rock" => new(0xbd, 0xa5, 0x5a),
+            "flying" => new(0x9c, 0xad, 0xf7),
+            "bug" => new(0xad, 0xbd, 0x21),
+            "psychic" => new(0xff, 0x73, 0xa5),
+            "ghost" => new(0x63, 0x63, 0xb5),
+            "steel" => new(0xad, 0xad, 0xc6),
+            "dark" => new(0x73, 0x5a, 0x4a),
+            "dragon" => new(0x7b, 0x63, 0xe7),
+            "fighting" => new(0xa5, 0x52, 0x39),
+            "fairy" => new(0xf7, 0xb5, 0xf7),
             _ => throw new Exception($"Type {type} does not exist.")
         };
     }
-
-    private class ConsoleOutputBuilder
-    {
-        private readonly List<List<Output>> output;
-
-        public ConsoleOutputBuilder(int height)
-        {
-            output = new(height);
-            for (int i = 0; i < height; i++)
-            {
-                output.Add(new());
-            }
-        }
-
-        public ConsoleOutputBuilder AddOutput(int lineNumber, Output output)
-        {
-            var line = this.output[lineNumber];
-
-            if (line is null)
-            {
-                line = new();
-                this.output[lineNumber] = line;
-            }
-
-            line.Add(output);
-
-            return this;
-        }
-
-        public void Print()
-        {
-            foreach (var line in output)
-            {
-                foreach (var segment in line)
-                {
-                    Console.ResetColor();
-
-                    if (segment.Background is not null)
-                    {
-                        Console.BackgroundColor = segment.Background.Value;
-                    }
-
-                    if (segment.TextColor is not null)
-                    {
-                        Console.ForegroundColor = segment.TextColor.Value;
-                    }
-
-                    Console.Write(segment.Text);
-                }
-
-                Console.ResetColor();
-                Console.WriteLine();
-            }
-        }
-    }
-
-    private record Output(string Text, ConsoleColor? TextColor = null, ConsoleColor? Background = null);
-
 }
