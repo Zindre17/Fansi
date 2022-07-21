@@ -1,35 +1,46 @@
 namespace Monline;
 
-public class ConsoleOutput
+public record ConsoleOutput
 {
-    public ConsoleOutput(string text)
+    public ConsoleOutput(string? text = null)
     {
-        Text = text;
+        Text = text ?? string.Empty;
     }
 
-    public string Text { get; }
+    public string Text { get; init; }
 
-    public bool Bold { get; set; }
-    public bool Italics { get; set; }
-    public bool Inverse { get; set; }
-    public bool Underline { get; set; }
-    public bool StrikeThrough { get; set; }
-    public bool Blinking { get; set; }
+    public bool Bold { get; init; }
+    public bool Italics { get; init; }
+    public bool Inverse { get; init; }
+    public bool Underline { get; init; }
+    public bool StrikeThrough { get; init; }
+    public bool Blinking { get; init; }
 
-    public int? Width { get; set; }
-    public Alignment Alignment { get; set; } = Alignment.Center;
+    public int? Width { get; init; }
+    public TextAlignment? Alignment { get; init; }
 
-    public int? Padding { get; set; }
-    public int? PaddingLeft { get; set; }
-    public int? PaddingRight { get; set; }
+    public int? Padding { get; init; }
+    public int? PaddingLeft { get; init; }
+    public int? PaddingRight { get; init; }
 
-    public int? SimpleForeground { get; set; }
-    public int? SimpleBackground { get; set; }
+    public int? SimpleForeground { get; init; }
+    public int? SimpleBackground { get; init; }
 
-    public Color? Foreground { get; set; }
-    public Color? Background { get; set; }
+    public Color? Foreground { get; init; }
+    public Color? Background { get; init; }
 
-    public bool ResetColorAfter { get; set; } = true;
+    public bool ResetColorAfter { get; init; } = true;
+
+    public int ActualWidth => Width ?? (Text.Length + ActualPadding);
+
+    public int ActualPadding => Alignment switch
+    {
+        null
+        or TextAlignment.Left => Padding ?? PaddingLeft ?? 0,
+        TextAlignment.Right => Padding ?? PaddingRight ?? 0,
+        TextAlignment.Center => 0,
+        _ => throw new Exception("Invalid alignment.")
+    };
 
     public void Print() => Console.Write(this);
 
@@ -37,18 +48,37 @@ public class ConsoleOutput
     {
         var ansi = GetAnsi();
         var alignedText = GetAlignedText();
-        var leftPad = new string(' ', Padding ?? PaddingLeft ?? 0);
-        var rightPad = new string(' ', Padding ?? PaddingRight ?? 0);
         var reset = ResetColorAfter ? $"{AnsiStart}{ResetAllArg}{AnsiStop}" : "";
 
-        return $"{ansi}{leftPad}{alignedText}{rightPad}{reset}";
+        return $"{ansi}{alignedText}{reset}";
     }
+
+    public ConsoleOutput Apply(ConsoleOutput other) => this with
+    {
+        Alignment = Alignment ?? other.Alignment,
+        Background = Background ?? other.Background,
+        Blinking = Blinking || other.Blinking,
+        Bold = Bold || other.Bold,
+        Foreground = Foreground ?? other.Foreground,
+        Inverse = Inverse || other.Inverse,
+        Italics = Italics || other.Italics,
+        Padding = Padding ?? other.Padding,
+        PaddingLeft = PaddingLeft ?? other.PaddingLeft,
+        PaddingRight = PaddingRight ?? other.PaddingRight,
+        ResetColorAfter = ResetColorAfter || other.ResetColorAfter,
+        SimpleBackground = SimpleBackground ?? other.SimpleBackground,
+        SimpleForeground = SimpleForeground ?? other.SimpleForeground,
+        StrikeThrough = StrikeThrough || other.StrikeThrough,
+        Underline = Underline || other.Underline,
+        Width = Width ?? other.Width,
+    };
 
     private string GetAlignedText() => Alignment switch
     {
-        Alignment.Center => GetCentered(),
-        Alignment.Left => GetLeftAligned(),
-        Alignment.Right => GetRightAligned(),
+        null
+        or TextAlignment.Left => GetLeftAligned(),
+        TextAlignment.Right => GetRightAligned(),
+        TextAlignment.Center => GetCentered(),
         _ => throw new Exception("Not a valid alignment position.")
     };
 
@@ -111,42 +141,30 @@ public class ConsoleOutput
 
     private string GetLeftAligned()
     {
-        if (Width is null)
-        {
-            return Text;
-        }
+        var leftPad = Padding ?? PaddingLeft ?? 0;
+        var rightPad = (Width - Text.Length - leftPad) ?? Padding ?? PaddingRight ?? 0;
 
-        var pad = Width.Value - Text.Length;
-        return $"{Text}{new string(' ', pad)}";
+        return $"{Pad(leftPad)}{Text}{Pad(rightPad)}";
     }
 
     private string GetRightAligned()
     {
-        if (Width is null)
-        {
-            return Text;
-        }
+        var rightPad = Padding ?? PaddingRight ?? 0;
+        var leftPad = (Width - Text.Length - rightPad) ?? Padding ?? PaddingLeft ?? 0;
 
-        var pad = Width.Value - Text.Length;
-        return $"{new string(' ', pad)}{Text}";
+        return $"{Pad(leftPad)}{Text}{Pad(rightPad)}";
     }
 
     private string GetCentered()
     {
-        if (Width is null)
-        {
-            return Text;
-        }
+        var padCount = (Width ?? Text.Length) - Text.Length;
+        var leftPad = padCount / 2;
+        var rightPad = leftPad + (padCount % 2);
 
-        var width = Width.Value;
-        var padCount = width - Text.Length;
-        var leftPadCount = padCount / 2;
-        var leftPad = new string(' ', leftPadCount);
-        var rightPad = new string(' ', leftPadCount + (padCount % 2));
-
-        return $"{leftPad}{Text}{rightPad}";
+        return $"{Pad(leftPad)}{Text}{Pad(rightPad)}";
     }
 
+    private static string Pad(int count) => new(' ', count);
 
     // Colors
     private const int BackgroundArg = 48;
@@ -174,7 +192,7 @@ public record Color(int Red, int Green, int Blue)
     public static Color Black => new(0, 0, 0);
 }
 
-public enum Alignment
+public enum TextAlignment
 {
     Center,
     Left,
