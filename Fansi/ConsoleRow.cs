@@ -1,4 +1,4 @@
-namespace Monline;
+namespace Fansi;
 
 public class ConsoleRow
 {

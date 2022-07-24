@@ -1,3 +1,5 @@
+using Fansi;
+
 namespace Monline;
 
 public static class Printer
