@@ -39,9 +39,9 @@ public static class Printer
             var console = consoleAreas[i];
             var mon = mons[i];
 
-            console[0].Fill(new(""));
-            console[1].Fill(new(mon.Name.Capitalized(), nameStyle));
-            console[2].Fill(new(""));
+            console[0].Fill();
+            console[1].Fill(mon.Name.Capitalized(), nameStyle);
+            console[2].Fill();
 
             var type1 = mon.Types[0];
             console[3].AddSegment(type1.Capitalized(), GetTypeFormat(type1), 1d / mon.Types.Length);
@@ -60,12 +60,12 @@ public static class Printer
             AddStat(console[8], mon.Stats.SpecialDefence, isEven ? mainBackground : secondaryBackground);
             AddStat(console[9], mon.Stats.Speed, isEven ? secondaryBackground : mainBackground);
 
-            console[10].Fill(new(""));
+            console[10].Fill();
 
             AddStat(console[11], mon.Stats.Sum, isEven ? secondaryBackground : mainBackground);
 
-            console[12].Fill(new(""));
-            console[13].Fill(new(""));
+            console[12].Fill();
+            console[13].Fill();
         }
 
         for (int i = 0; i < 14; i++)

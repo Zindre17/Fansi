@@ -45,6 +45,11 @@ public class ConsoleRow
         segments.Add(segment);
     }
 
+    public void Fill(string text = "", OutputFormat? format = null)
+    {
+        Fill(new(text, format));
+    }
+
     public void Fill(ConsoleOutput row)
     {
         if (segments.Any())
