@@ -2,43 +2,43 @@ namespace Fansi;
 
 public class ConsoleOutput
 {
-    public ConsoleOutput(string? text = null, OutputOptions? options = null)
+    public ConsoleOutput(string? text = null, OutputFormat? format = null)
     {
         Text = text ?? string.Empty;
-        Options = options ?? new();
+        Format = format ?? new();
     }
 
     public string Text { get; set; }
 
-    public OutputOptions Options { get; set; }
+    public OutputFormat Format { get; set; }
 
-    public int ActualWidth => Options.Width ?? (Text.Length + PaddingWhenWidthIsNotSet);
+    public int ActualWidth => Format.Width ?? (Text.Length + PaddingWhenWidthIsNotSet);
 
-    public int PaddingWhenWidthIsNotSet => Options.Alignment switch
+    public int PaddingWhenWidthIsNotSet => Format.Alignment switch
     {
         null
-        or TextAlignment.Left => Options.Padding ?? Options.PaddingLeft ?? 0,
-        TextAlignment.Right => Options.Padding ?? Options.PaddingRight ?? 0,
+        or TextAlignment.Left => Format.Padding ?? Format.PaddingLeft ?? 0,
+        TextAlignment.Right => Format.Padding ?? Format.PaddingRight ?? 0,
         TextAlignment.Center => 0,
         _ => throw new Exception("Invalid alignment.")
     };
 
-    public void Apply(OutputOptions options)
+    public void Apply(OutputFormat format)
     {
-        Options = Options.Apply(options);
+        Format = Format.Apply(format);
     }
 
-    public void Print(OutputOptions? options = null)
+    public void Print(OutputFormat? format = null)
     {
-        if (options is null)
+        if (format is null)
         {
-            Options.Print(Text);
+            Format.Print(Text);
         }
         else
         {
-            Options.Apply(options).Print(Text);
+            Format.Apply(format).Print(Text);
         }
     }
 
-    public override string ToString() => Options.ApplyToText(Text);
+    public override string ToString() => Format.ApplyToText(Text);
 }

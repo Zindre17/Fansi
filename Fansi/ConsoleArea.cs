@@ -13,18 +13,18 @@ public class ConsoleArea
         }
     }
 
-    public OutputOptions Common { get; set; } = new();
+    public OutputFormat CommonFormat { get; set; } = new();
 
-    public void Apply(OutputOptions options)
+    public void Apply(OutputFormat format)
     {
-        Common = Common.Apply(options);
+        CommonFormat = CommonFormat.Apply(format);
     }
 
     public ConsoleRow this[int index] => lines[index];
 
-    public void Print(OutputOptions? options = null)
+    public void Print(OutputFormat? format = null)
     {
-        var combined = Common.Apply(options ?? new());
+        var combined = CommonFormat.Apply(format ?? new());
         foreach (var line in lines)
         {
             line.Print(combined);
@@ -32,9 +32,9 @@ public class ConsoleArea
         }
     }
 
-    public void PrintRow(int index, OutputOptions? options = null)
+    public void PrintRow(int index, OutputFormat? format = null)
     {
-        var combined = Common.Apply(options ?? new());
+        var combined = CommonFormat.Apply(format ?? new());
         this[index].Print(combined);
     }
 }

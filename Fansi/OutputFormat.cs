@@ -1,6 +1,6 @@
 namespace Fansi;
 
-public record OutputOptions
+public record OutputFormat
 {
     public bool? Bold { get; init; }
     public bool? Italics { get; init; }
@@ -37,7 +37,7 @@ public record OutputOptions
         Console.Write(ApplyToText(text));
     }
 
-    public OutputOptions Apply(OutputOptions other) => this with
+    public OutputFormat Apply(OutputFormat other) => this with
     {
         Alignment = Alignment ?? other.Alignment,
         Background = Background ?? other.Background,

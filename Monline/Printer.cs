@@ -7,13 +7,13 @@ public static class Printer
     private readonly static Color mainBackground = new(40, 40, 40);
     private readonly static Color secondaryBackground = new(60, 60, 60);
 
-    private readonly static OutputOptions nameStyle = new()
+    private readonly static OutputFormat nameStyle = new()
     {
         Bold = true,
         Alignment = TextAlignment.Center,
     };
 
-    private readonly static OutputOptions typeStyle = new()
+    private readonly static OutputFormat typeStyle = new()
     {
         Italics = true,
         Alignment = TextAlignment.Center,
@@ -26,7 +26,7 @@ public static class Printer
         {
             consoleAreas[i] = new ConsoleArea(14, 30)
             {
-                Common = new()
+                CommonFormat = new()
                 {
                     Background = i % 2 is 0 ? mainBackground : secondaryBackground,
                     Foreground = Color.White,
@@ -78,18 +78,18 @@ public static class Printer
         }
     }
 
-    private static OutputOptions GetTypeFormat(string type)
+    private static OutputFormat GetTypeFormat(string type)
     {
         return typeStyle.Apply(new() { Background = TranslateTypeToColor(type) });
     }
 
-    private static readonly OutputOptions statNameFormat = new()
+    private static readonly OutputFormat statNameFormat = new()
     {
         Alignment = TextAlignment.Right,
         PaddingRight = 1,
     };
 
-    private static readonly OutputOptions statValueFormat = new()
+    private static readonly OutputFormat statValueFormat = new()
     {
         Alignment = TextAlignment.Right,
         Width = 4

@@ -12,16 +12,16 @@ public class ConsoleRow
         this.maxWidth = maxWidth;
     }
 
-    public OutputOptions Common { get; set; } = new();
+    public OutputFormat CommonFormat { get; set; } = new();
 
-    public void Apply(OutputOptions options)
+    public void Apply(OutputFormat format)
     {
-        Common = Common.Apply(options);
+        CommonFormat = CommonFormat.Apply(format);
     }
 
-    public void AddSegment(string text, OutputOptions? options = null, double? widthRatio = null)
+    public void AddSegment(string text, OutputFormat? format = null, double? widthRatio = null)
     {
-        AddSegment(new(text, options), widthRatio);
+        AddSegment(new(text, format), widthRatio);
     }
 
     public void AddSegment(ConsoleOutput segment, double? widthRatio = null)
@@ -58,9 +58,9 @@ public class ConsoleRow
         segments.Add(row);
     }
 
-    public void Print(OutputOptions? options = null)
+    public void Print(OutputFormat? format = null)
     {
-        var common = Common.Apply(options ?? new());
+        var common = CommonFormat.Apply(format ?? new());
         foreach (var segment in segments)
         {
             segment.Print(common);
