@@ -12,7 +12,17 @@ public class ConsoleRow
         this.maxWidth = maxWidth;
     }
 
-    public ConsoleOutput Common { get; set; } = new();
+    public OutputOptions Common { get; set; } = new();
+
+    public void Apply(OutputOptions options)
+    {
+        Common = Common.Apply(options);
+    }
+
+    public void AddSegment(string text, OutputOptions? options = null, double? widthRatio = null)
+    {
+        AddSegment(new(text, options), widthRatio);
+    }
 
     public void AddSegment(ConsoleOutput segment, double? widthRatio = null)
     {
@@ -22,7 +32,7 @@ public class ConsoleRow
             {
                 throw new ArgumentException("Must be between 0 and 1.", nameof(widthRatio));
             }
-            segment = segment with { Width = (int)Math.Round(maxWidth * widthRatio.Value) };
+            segment.Apply(new() { Width = (int)Math.Round(maxWidth * widthRatio.Value) });
         }
 
         var segmentWidth = segment.ActualWidth;
@@ -43,21 +53,22 @@ public class ConsoleRow
         }
 
         currentWidth = maxWidth;
-        row = row with { Width = maxWidth };
+        row.Apply(new() { Width = maxWidth });
 
         segments.Add(row);
     }
 
-    public void Print()
+    public void Print(OutputOptions? options = null)
     {
+        var common = Common.Apply(options ?? new());
         foreach (var segment in segments)
         {
-            segment.Apply(Common).Print();
+            segment.Print(common);
         }
         if (currentWidth < maxWidth)
         {
-            var rest = Common with { Width = maxWidth - currentWidth };
-            rest.Print();
+            var rest = common with { Width = maxWidth - currentWidth };
+            rest.Print("");
         }
     }
 }

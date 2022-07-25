@@ -7,6 +7,18 @@ public static class Printer
     private readonly static Color mainBackground = new(40, 40, 40);
     private readonly static Color secondaryBackground = new(60, 60, 60);
 
+    private readonly static OutputOptions nameStyle = new()
+    {
+        Bold = true,
+        Alignment = TextAlignment.Center,
+    };
+
+    private readonly static OutputOptions typeStyle = new()
+    {
+        Italics = true,
+        Alignment = TextAlignment.Center,
+    };
+
     public static void PrintPokemon(params Pokemon[] mons)
     {
         var consoleAreas = new ConsoleArea[mons.Length];
@@ -28,38 +40,16 @@ public static class Printer
             var mon = mons[i];
 
             console[0].Fill(new(""));
-            console[1].Fill(new(mon.Name.Capitalized())
-            {
-                Bold = true,
-                Alignment = TextAlignment.Center,
-            });
+            console[1].Fill(new(mon.Name.Capitalized(), nameStyle));
             console[2].Fill(new(""));
 
-            var typeFormat = new ConsoleOutput
-            {
-                Italics = true,
-                Alignment = TextAlignment.Center,
-            };
-
-            console[3].AddSegment(
-                typeFormat with
-                {
-                    Text = mon.Types[0].Capitalized(),
-                    Background = TranslateTypeToColor(mon.Types[0])
-                },
-                1d / mon.Types.Length
-            );
+            var type1 = mon.Types[0];
+            console[3].AddSegment(type1.Capitalized(), GetTypeFormat(type1), 1d / mon.Types.Length);
 
             if (mon.Types.Length > 1)
             {
-                console[3].AddSegment(
-                    typeFormat with
-                    {
-                        Text = mon.Types[1].Capitalized(),
-                        Background = TranslateTypeToColor(mon.Types[1])
-                    },
-                    0.5
-                );
+                var type2 = mon.Types[1];
+                console[3].AddSegment(type2.Capitalized(), GetTypeFormat(type2), 0.5);
             }
 
             var isEven = i % 2 is 0;
@@ -88,34 +78,30 @@ public static class Printer
         }
     }
 
+    private static OutputOptions GetTypeFormat(string type)
+    {
+        return typeStyle.Apply(new() { Background = TranslateTypeToColor(type) });
+    }
+
+    private static readonly OutputOptions statNameFormat = new()
+    {
+        Alignment = TextAlignment.Right,
+        PaddingRight = 1,
+    };
+
+    private static readonly OutputOptions statValueFormat = new()
+    {
+        Alignment = TextAlignment.Right,
+        Width = 4
+    };
+
     private static void AddStat(ConsoleRow row, Stat stat, Color background)
     {
-        row.Common = row.Common with
-        {
-            Background = background
-        };
+        row.Apply(new() { Background = background });
 
-        row.AddSegment(
-            new(stat.Name)
-            {
-                Alignment = TextAlignment.Right,
-                PaddingRight = 1,
-            },
-            .5
-        );
-        row.AddSegment(
-            new($"{stat.Value}")
-            {
-                Alignment = TextAlignment.Right,
-                Width = 4
-            }
-        );
-        row.AddSegment(
-            new(stat.Effort > 0 ? $"+{stat.Effort}" : "")
-            {
-                PaddingLeft = 1,
-            }
-        );
+        row.AddSegment(stat.Name, statNameFormat, 0.5);
+        row.AddSegment(stat.Value.ToString(), statValueFormat);
+        row.AddSegment(stat.Effort > 0 ? $" +{stat.Effort}" : "");
     }
 
     public static Color TranslateTypeToColor(string type)
