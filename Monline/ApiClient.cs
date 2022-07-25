@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Net.Http.Json;
 
 namespace Monline;
@@ -40,7 +41,7 @@ public record Pokemon
 }
 
 
-public record Stats
+public record Stats : IEnumerable<Stat>
 {
     public Stats(StatResponse[] stats)
     {
@@ -77,6 +78,21 @@ public record Stats
     public Stat SpecialDefence { get; init; }
     public Stat Speed { get; init; }
     public Stat Sum { get; init; }
+
+    public IEnumerator<Stat> GetEnumerator()
+    {
+        yield return Hp;
+        yield return Attack;
+        yield return Defence;
+        yield return SpecialAttack;
+        yield return SpecialDefence;
+        yield return Speed;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 }
 
 public record Stat(int Value, int Effort, string Name);
