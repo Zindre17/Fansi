@@ -2,14 +2,18 @@ namespace Fansi;
 
 public class ConsoleArea
 {
-    private readonly ConsoleRow[] lines;
+    private readonly List<ConsoleRow> lines = new();
+    private readonly int width;
 
-    public ConsoleArea(int height, int width)
+    public ConsoleArea(int width, int? height = null)
     {
-        lines = new ConsoleRow[height];
-        for (int i = 0; i < height; i++)
+        this.width = width;
+        if (height is not null)
         {
-            lines[i] = new(width);
+            for (int i = 0; i < height; i++)
+            {
+                lines.Add(new(width));
+            }
         }
     }
 
@@ -18,6 +22,23 @@ public class ConsoleArea
     public void Apply(OutputFormat format)
     {
         CommonFormat = CommonFormat.Apply(format);
+    }
+
+    public ConsoleRow AddNewRow()
+    {
+        var row = new ConsoleRow(width);
+        lines.Add(row);
+        return row;
+    }
+
+    public void AddRow(string text, OutputFormat? format = null)
+    {
+        AddRow(new(text, format));
+    }
+
+    public void AddRow(ConsoleOutput output)
+    {
+        AddNewRow().Fill(output);
     }
 
     public ConsoleRow this[int index] => lines[index];

@@ -24,7 +24,7 @@ public static class Printer
         var consoleAreas = new ConsoleArea[mons.Length];
         for (int i = 0; i < mons.Length; i++)
         {
-            consoleAreas[i] = new ConsoleArea(14, 30)
+            consoleAreas[i] = new ConsoleArea(30)
             {
                 CommonFormat = new()
                 {
@@ -39,33 +39,35 @@ public static class Printer
             var console = consoleAreas[i];
             var mon = mons[i];
 
-            console[0].Fill();
-            console[1].Fill(mon.Name.Capitalized(), nameStyle);
-            console[2].Fill();
+            console.AddNewRow();
+            console.AddRow(mon.Name.Capitalized(), nameStyle);
+            console.AddNewRow();
 
+            var typeRow = console.AddNewRow();
             var type1 = mon.Types[0];
-            console[3].AddSegment(type1.Capitalized(), GetTypeFormat(type1), 1d / mon.Types.Length);
+            typeRow.AddSegment(type1.Capitalized(), GetTypeFormat(type1), 1d / mon.Types.Length);
 
             if (mon.Types.Length > 1)
             {
                 var type2 = mon.Types[1];
-                console[3].AddSegment(type2.Capitalized(), GetTypeFormat(type2), 0.5);
+                typeRow.AddSegment(type2.Capitalized(), GetTypeFormat(type2), 0.5);
             }
 
-            var isEven = i % 2 is 0;
-            AddStat(console[4], mon.Stats.Hp, isEven ? mainBackground : secondaryBackground);
-            AddStat(console[5], mon.Stats.Attack, isEven ? secondaryBackground : mainBackground);
-            AddStat(console[6], mon.Stats.Defence, isEven ? mainBackground : secondaryBackground);
-            AddStat(console[7], mon.Stats.SpecialAttack, isEven ? secondaryBackground : mainBackground);
-            AddStat(console[8], mon.Stats.SpecialDefence, isEven ? mainBackground : secondaryBackground);
-            AddStat(console[9], mon.Stats.Speed, isEven ? secondaryBackground : mainBackground);
+            var counter = i;
+            bool isEven;
+            foreach (var stat in mon.Stats)
+            {
+                isEven = counter++ % 2 is 0;
+                AddStat(console.AddNewRow(), stat, isEven ? mainBackground : secondaryBackground);
+            }
 
-            console[10].Fill();
+            console.AddNewRow();
 
-            AddStat(console[11], mon.Stats.Sum, isEven ? secondaryBackground : mainBackground);
+            isEven = counter++ % 2 is 0;
+            AddStat(console.AddNewRow(), mon.Stats.Sum, isEven ? secondaryBackground : mainBackground);
 
-            console[12].Fill();
-            console[13].Fill();
+            console.AddNewRow();
+            console.AddNewRow();
         }
 
         for (int i = 0; i < 14; i++)
