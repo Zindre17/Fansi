@@ -35,7 +35,7 @@ public class ConsoleRow
             segment.Apply(new() { Width = (int)Math.Round(maxWidth * widthRatio.Value) });
         }
 
-        var segmentWidth = segment.ActualWidth;
+        var segmentWidth = segment.CalculateWidth();
         if ((segmentWidth + currentWidth) > maxWidth)
         {
             throw new InvalidOperationException("Cannot add segment. Max width will be violated.");

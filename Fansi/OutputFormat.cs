@@ -24,6 +24,18 @@ public record OutputFormat
 
     public bool? ResetAllAfter { get; init; }
 
+    public int CalculateWidth(string text)
+    {
+        return Width ?? (text.Length + Alignment switch
+        {
+            null
+            or TextAlignment.Left
+            or TextAlignment.Right => (PaddingRight ?? Padding ?? 0) + (PaddingLeft ?? Padding ?? 0),
+            TextAlignment.Center => 0,
+            _ => throw new ArgumentOutOfRangeException("Undefined text alignment.", nameof(Alignment))
+        });
+    }
+
     public string ApplyToText(string text)
     {
         var options = GetAnsiOptionsString();
@@ -134,7 +146,7 @@ public record OutputFormat
     private string GetLeftAligned(string text)
     {
         var leftPad = Padding ?? PaddingLeft ?? 0;
-        var rightPad = (Width - text.Length - leftPad) ?? Padding ?? PaddingRight ?? 0;
+        var rightPad = (Width - text.Length - leftPad) ?? PaddingRight ?? Padding ?? 0;
 
         return $"{Pad(leftPad)}{text}{Pad(rightPad)}";
     }
@@ -142,7 +154,7 @@ public record OutputFormat
     private string GetRightAligned(string text)
     {
         var rightPad = Padding ?? PaddingRight ?? 0;
-        var leftPad = (Width - text.Length - rightPad) ?? Padding ?? PaddingLeft ?? 0;
+        var leftPad = (Width - text.Length - rightPad) ?? PaddingLeft ?? Padding ?? 0;
 
         return $"{Pad(leftPad)}{text}{Pad(rightPad)}";
     }
