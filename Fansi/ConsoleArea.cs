@@ -1,6 +1,6 @@
 namespace Fansi;
 
-public class ConsoleArea
+public class ConsoleArea : IPrintable
 {
     private readonly List<ConsoleRow> lines = new();
     private readonly int width;
@@ -14,6 +14,11 @@ public class ConsoleArea
             lines.Add(new(width));
         }
     }
+
+    public ConsoleRow this[int index] => lines[index];
+
+    public int Height => lines.Count;
+    public int Width => width;
 
     public OutputFormat CommonFormat { get; set; } = new();
 
@@ -38,8 +43,6 @@ public class ConsoleArea
     {
         AddNewRow().Fill(output);
     }
-
-    public ConsoleRow this[int index] => lines[index];
 
     public void Print(OutputFormat? format = null)
     {

@@ -1,6 +1,6 @@
 namespace Fansi;
 
-public class ConsoleOutput
+public class ConsoleOutput : IPrintable
 {
     public ConsoleOutput(string? text = null, OutputFormat? format = null)
     {

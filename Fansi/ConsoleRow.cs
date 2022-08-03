@@ -1,6 +1,6 @@
 namespace Fansi;
 
-public class ConsoleRow
+public class ConsoleRow : IPrintable
 {
     private readonly int maxWidth;
     private readonly List<ConsoleOutput> segments = new();
