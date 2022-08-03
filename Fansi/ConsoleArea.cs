@@ -8,12 +8,10 @@ public class ConsoleArea
     public ConsoleArea(int width, int? height = null)
     {
         this.width = width;
-        if (height is not null)
+
+        for (int i = 0; i < height; i++)
         {
-            for (int i = 0; i < height; i++)
-            {
-                lines.Add(new(width));
-            }
+            lines.Add(new(width));
         }
     }
 
