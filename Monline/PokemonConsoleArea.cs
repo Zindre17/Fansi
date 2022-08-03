@@ -2,7 +2,7 @@ using Fansi;
 
 namespace Monline;
 
-public class PokemonConsoleArea
+public class PokemonConsoleArea : ConsoleArea
 {
     private const int width = 30;
     public const int height = 14;
@@ -22,9 +22,7 @@ public class PokemonConsoleArea
         Alignment = TextAlignment.Center,
     };
 
-    private readonly ConsoleArea area = new(width, height);
-
-    public PokemonConsoleArea(Pokemon mon, bool useSecondaryColors)
+    public PokemonConsoleArea(Pokemon mon, bool useSecondaryColors) : base(width, height)
     {
         if (useSecondaryColors)
         {
@@ -32,32 +30,27 @@ public class PokemonConsoleArea
             secondaryBackground = primaryColor;
         }
 
-        area.Apply(new() { Background = mainBackground, Foreground = Color.White });
+        Apply(new() { Background = mainBackground, Foreground = Color.White });
 
         SetName(mon.Name);
         SetTypes(mon.Types);
         SetStats(mon.Stats);
     }
 
-    public void PrintRow(int index)
-    {
-        area.PrintRow(index);
-    }
-
     private void SetName(string name)
     {
-        area[NameRowIndex].Fill(name.Capitalized(), nameFormat);
+        this[NameRowIndex].Fill(name.Capitalized(), nameFormat);
     }
 
     private void SetTypes(string[] types)
     {
         var type1 = types[0];
-        area[TypeRowIndex].AddSegment(type1.Capitalized(), GetTypeFormat(type1), 1d / types.Length);
+        this[TypeRowIndex].AddSegment(type1.Capitalized(), GetTypeFormat(type1), 1d / types.Length);
 
         if (types.Length > 1)
         {
             var type2 = types[1];
-            area[TypeRowIndex].AddSegment(type2.Capitalized(), GetTypeFormat(type2), 0.5);
+            this[TypeRowIndex].AddSegment(type2.Capitalized(), GetTypeFormat(type2), 0.5);
         }
     }
 
@@ -75,7 +68,7 @@ public class PokemonConsoleArea
 
     private void SetStat(Stat stat, int rowIndex, bool useSecondaryColors)
     {
-        var row = area[rowIndex];
+        var row = this[rowIndex];
         if (useSecondaryColors)
         {
             row.Apply(new() { Background = secondaryBackground });
