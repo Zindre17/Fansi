@@ -40,7 +40,7 @@ public record OutputFormat
     {
         var options = GetAnsiOptionsString();
         var alignedText = GetAlignedText(text);
-        var reset = GetAnsiResetString();
+        var reset = string.IsNullOrEmpty(options) ? "" : GetAnsiResetString();
         return $"{options}{alignedText}{reset}";
     }
 
