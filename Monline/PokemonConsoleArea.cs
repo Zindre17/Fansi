@@ -1,4 +1,5 @@
 using Fansi;
+using Fansi.Layout;
 
 namespace Monline;
 

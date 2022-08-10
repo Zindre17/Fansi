@@ -1,4 +1,4 @@
-namespace Fansi;
+namespace Fansi.Layout;
 
 public class ConsoleOutput : IPrintable
 {
