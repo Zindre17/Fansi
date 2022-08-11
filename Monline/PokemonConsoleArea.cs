@@ -31,7 +31,7 @@ public class PokemonConsoleArea : ConsoleArea
             secondaryBackground = primaryColor;
         }
 
-        Apply(new() { Background = mainBackground, Foreground = Color.White });
+        Apply(new() { BackgroundRgb = mainBackground, ForegroundRgb = Color.White });
 
         SetName(mon.Name);
         SetTypes(mon.Types);
@@ -72,7 +72,7 @@ public class PokemonConsoleArea : ConsoleArea
         var row = this[rowIndex];
         if (useSecondaryColors)
         {
-            row.Apply(new() { Background = secondaryBackground });
+            row.Apply(new() { BackgroundRgb = secondaryBackground });
         }
 
         row.AddSegment(stat.Name, statNameFormat, 0.5);
@@ -82,7 +82,7 @@ public class PokemonConsoleArea : ConsoleArea
 
     private static OutputFormat GetTypeFormat(string type)
     {
-        return typeStyle.Apply(new() { Background = TranslateTypeToColor(type) });
+        return typeStyle.Apply(new() { BackgroundRgb = TranslateTypeToColor(type) });
     }
 
     private readonly static OutputFormat typeStyle = new()
