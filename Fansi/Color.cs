@@ -21,8 +21,8 @@ public enum BasicColor
     Magenta = 35,
     Cyan = 36,
     White = 37,
+
     Default = 39,
-    Reset = 0,
 
     BrigthBlack = 90,
     BrightRed = 91,
