@@ -130,7 +130,7 @@ public record OutputFormat
         {
             args.Add($"{ForegroundArg};{C256Arg};{SimpleForeground}");
         }
-        if (Foreground is not null)
+        else if (Foreground is not null)
         {
             args.Add($"{ForegroundArg};{RgbArg};{Foreground.Red};{Foreground.Green};{Foreground.Blue}");
         }
