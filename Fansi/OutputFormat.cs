@@ -18,6 +18,8 @@ public record OutputFormat
     public int? PaddingLeft { get; init; }
     public int? PaddingRight { get; init; }
 
+    public bool? AddEllipsisToOverflow { get; init; }
+
     public int? SimpleForeground { get; init; }
     public int? SimpleBackground { get; init; }
 
@@ -40,6 +42,22 @@ public record OutputFormat
 
     public string ApplyToText(string text)
     {
+        if (Width is not null)
+        {
+            if (Width <= 0)
+            {
+                throw new InvalidOperationException("Width can not be 0 or less.");
+            }
+            switch (Alignment)
+            {
+                case null
+                  or TextAlignment.Left when (Padding ?? PaddingLeft ?? 0) >= Width:
+                    throw new InvalidOperationException("Width must be greater than left padding.");
+                case TextAlignment.Right when (Padding ?? PaddingRight ?? 0) >= Width:
+                    throw new InvalidOperationException("Width must be greater than right padding.");
+            };
+        }
+
         var options = GetAnsiOptionsString();
         var alignedText = GetAlignedText(text);
         var reset = string.IsNullOrEmpty(options) ? "" : GetAnsiResetString();
@@ -54,6 +72,7 @@ public record OutputFormat
     public OutputFormat Apply(OutputFormat other) => this with
     {
         Alignment = Alignment ?? other.Alignment,
+        AddEllipsisToOverflow = AddEllipsisToOverflow ?? other.AddEllipsisToOverflow,
         Background = Background ?? other.Background,
         Blinking = Blinking ?? other.Blinking,
         Bold = Bold ?? other.Bold,
@@ -160,6 +179,10 @@ public record OutputFormat
     private string GetLeftAligned(string text)
     {
         var leftPad = Padding ?? PaddingLeft ?? 0;
+        if (Width is not null && text.Length > Width)
+        {
+            text = Truncate(text, Width.Value - leftPad, AddEllipsisToOverflow ?? true);
+        }
         var rightPad = (Width - text.Length - leftPad) ?? PaddingRight ?? Padding ?? 0;
 
         return $"{Pad(leftPad)}{text}{Pad(rightPad)}";
@@ -168,6 +191,10 @@ public record OutputFormat
     private string GetRightAligned(string text)
     {
         var rightPad = Padding ?? PaddingRight ?? 0;
+        if (Width is not null && text.Length > Width)
+        {
+            text = Truncate(text, Width.Value - rightPad, AddEllipsisToOverflow ?? true);
+        }
         var leftPad = (Width - text.Length - rightPad) ?? PaddingLeft ?? Padding ?? 0;
 
         return $"{Pad(leftPad)}{text}{Pad(rightPad)}";
@@ -175,11 +202,28 @@ public record OutputFormat
 
     private string GetCentered(string text)
     {
+        if (Width is not null && text.Length > Width)
+        {
+            text = Truncate(text, Width.Value, AddEllipsisToOverflow ?? true);
+        }
         var padCount = (Width - text.Length) ?? 0;
         var leftPad = padCount / 2;
         var rightPad = leftPad + (padCount % 2);
 
         return $"{Pad(leftPad)}{text}{Pad(rightPad)}";
+    }
+
+    private static string Truncate(string text, int maxLength, bool addEllipsis)
+    {
+        if (maxLength < 0)
+        {
+            throw new ArgumentException("Must be grater than 0.", nameof(maxLength));
+        }
+        if (maxLength > 3 && addEllipsis)
+        {
+            return $"{text[..(maxLength - 3)]}...";
+        }
+        return text[..maxLength];
     }
 
     private static string Pad(int count) => new(' ', count);
