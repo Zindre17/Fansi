@@ -1,35 +1,174 @@
 namespace Fansi;
 
+/// <summary>
+///     <para>
+///         A reusable text formatter that is independent of the text is should format.
+///     </para>
+///     <para>
+///         It defines rules for how to format any text, and provides methods for applying this format to a given text.
+///     </para>
+/// </summary>
 public record OutputFormat
 {
+    /// <summary>
+    ///     Make the text bold, when true.
+    /// </summary>
     public bool? Bold { get; init; }
+
+    /// <summary>
+    ///     Dim or fade the text, when true.
+    /// </summary>
     public bool? Dim { get; init; }
+
+    /// <summary>
+    ///     Make the text italic, when true.
+    /// </summary>
     public bool? Italics { get; init; }
+
+    /// <summary>
+    ///     Underline the text, when true.
+    /// </summary>
     public bool? Underline { get; init; }
+
+    /// <summary>
+    ///     Make the text blink, when true.
+    /// </summary>
+    /// <remarks>
+    ///     Note that support for this in terminals is limited.
+    /// </remarks>
     public bool? Blinking { get; init; }
+
+    /// <summary>
+    ///     Swap foreground and background colors, when true.
+    /// </summary>
     public bool? Inverse { get; init; }
+
+    /// <summary>
+    ///     Hide text, when true.
+    /// </summary>
     public bool? Hidden { get; init; }
+
+    /// <summary>
+    ///     Add a strike through decoration to the text, when true.
+    /// </summary>
     public bool? StrikeThrough { get; init; }
 
+    /// <summary>
+    ///     Sets a constant width for the text.
+    /// </summary>
+    /// <remarks>
+    ///     It has to be greater than the set padding, depending on text alignment.
+    /// </remarks>
     public int? Width { get; init; }
+
+    /// <summary>
+    ///     Specifies how to align the text within the available width.
+    /// </summary>
     public TextAlignment? Alignment { get; init; }
 
+    /// <summary>
+    ///     Amount of padding to use on either side.
+    /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///         Padding is only applied to one side depending on <see cref="Alignment" />,
+    ///         when <see cref="Width" /> is set.
+    ///     </para>
+    ///     <para>
+    ///         Padding is ignored when <see cref="Alignment" /> is set to <see cref="TextAlignment.Center" />.
+    ///     </para>
+    /// </remarks>
     public int? Padding { get; init; }
+
+    /// <summary>
+    ///     Amount of padding to use on the left side.
+    /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///         This property overrides <see cref="Padding" /> for the left side, if both are set.
+    ///     </para>
+    ///     <para>
+    ///         Padding is ignored when <see cref="Alignment" /> is set to <see cref="TextAlignment.Center" />.
+    ///     </para>
+    /// </remarks>
     public int? PaddingLeft { get; init; }
+
+    /// <summary>
+    ///     Amount of padding to use on the right side.
+    /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///         This property overrides <see cref="Padding" /> for the right side, if both are set.
+    ///     </para>
+    ///     <para>
+    ///         Padding is ignored when <see cref="Alignment" /> is set to <see cref="TextAlignment.Center" />.
+    ///     </para>
+    /// </remarks>
     public int? PaddingRight { get; init; }
 
+    /// <summary>
+    ///     Add ellipsis (...) at the end, when text overflows the set <see cref="Width" />.
+    /// </summary>
     public bool? AddEllipsisToOverflow { get; init; }
 
+    /// <summary>
+    ///     Sets foreground (text) color from a preset 16 color options
+    ///     (17 if you include <see cref="BasicColor.Default" />).
+    /// </summary>
+    /// <remarks>
+    ///     Overrides <see cref="Foreground256" /> and <see cref="ForegroundRgb" />.
+    /// </remarks>
     public BasicColor? Foreground { get; init; }
+
+    /// <summary>
+    ///     Sets foreground (text) color from a preset 256 color options (0 - 255).
+    /// </summary>
+    /// <remarks>
+    ///     Overrides <see cref="ForegroundRgb" />.
+    /// </remarks>
     public int? Foreground256 { get; init; }
+
+    /// <summary>
+    ///     Sets foreground (text) color to any 24-bit RGB color.
+    /// </summary>
     public Color? ForegroundRgb { get; init; }
 
+    /// <summary>
+    ///     Sets background color from a preset 16 color options
+    ///     (17 if you include <see cref="BasicColor.Default" />).
+    /// </summary>
+    /// <remarks>
+    ///     Overrides <see cref="Background256" /> and <see cref="BackgroundRgb" />.
+    /// </remarks>
     public BasicColor? Background { get; init; }
+
+    /// <summary>
+    ///     Sets background color from a preset 256 color options (0 - 255).
+    /// </summary>
+    /// <remarks>
+    ///     Overrides <see cref="BackgroundRgb" />.
+    /// </remarks>
     public int? Background256 { get; init; }
+
+    /// <summary>
+    ///     Sets backgrund color to any 24-bit RGB color.
+    /// </summary>
     public Color? BackgroundRgb { get; init; }
 
+    /// <summary>
+    ///     Reset all colors and styles at the end.
+    /// </summary>
     public bool? ResetAllAfter { get; init; }
 
+    /// <summary>
+    ///     Calculate width of a given text, when width, alignment, and padding is applied.
+    /// </summary>
+    /// <param name="text">
+    ///     The text to measure on.
+    /// </param>
+    /// <returns>
+    ///     The width of the given text after applying this format to it.
+    /// </returns>
     public int CalculateWidth(string text)
     {
         return Width ?? (text.Length + Alignment switch
@@ -42,6 +181,15 @@ public record OutputFormat
         });
     }
 
+    /// <summary>
+    ///     Apply this format to the given text.
+    /// </summary>
+    /// <param name="text">
+    ///     The text to apply this format on.
+    /// </param>
+    /// <returns>
+    ///     The formatted text.
+    /// </returns>
     public string ApplyToText(string text)
     {
         if (Width is not null)
@@ -71,11 +219,27 @@ public record OutputFormat
         return $"{options}{alignedText}{reset}";
     }
 
+    /// <summary>
+    ///     Format the given text and write it to console (no extra newline character at the end).
+    /// </summary>
+    /// <param name="text">
+    ///     The text to format.
+    /// </param>
     public void Print(string text)
     {
         Console.Write(ApplyToText(text));
     }
 
+    /// <summary>
+    ///     Combine two formats by creating a copy of this, 
+    ///     and applying any properties of the other that are not explicitly set in this.
+    /// </summary>
+    /// <param name="other">
+    ///     The format to enrich this with.
+    /// </param>
+    /// <returns>
+    ///     A combination of both formats, in a new instance.
+    /// </returns>
     public OutputFormat Apply(OutputFormat other) => this with
     {
         Alignment = Alignment ?? other.Alignment,
