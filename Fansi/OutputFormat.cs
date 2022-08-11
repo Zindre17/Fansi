@@ -20,11 +20,13 @@ public record OutputFormat
 
     public bool? AddEllipsisToOverflow { get; init; }
 
-    public int? SimpleForeground { get; init; }
-    public int? SimpleBackground { get; init; }
+    public BasicColor? Foreground { get; init; }
+    public int? Foreground256 { get; init; }
+    public Color? ForegroundRgb { get; init; }
 
-    public Color? Foreground { get; init; }
-    public Color? Background { get; init; }
+    public BasicColor? Background { get; init; }
+    public int? Background256 { get; init; }
+    public Color? BackgroundRgb { get; init; }
 
     public bool? ResetAllAfter { get; init; }
 
@@ -58,6 +60,11 @@ public record OutputFormat
             };
         }
 
+        if (Foreground256 > 255 || Background256 > 256)
+        {
+            throw new InvalidOperationException("Foreground256 and Background256 can only be in the range 0 through 255 (8-bit).");
+        }
+
         var options = GetAnsiOptionsString();
         var alignedText = GetAlignedText(text);
         var reset = string.IsNullOrEmpty(options) ? "" : GetAnsiResetString();
@@ -74,10 +81,14 @@ public record OutputFormat
         Alignment = Alignment ?? other.Alignment,
         AddEllipsisToOverflow = AddEllipsisToOverflow ?? other.AddEllipsisToOverflow,
         Background = Background ?? other.Background,
+        Background256 = Background256 ?? other.Background256,
+        BackgroundRgb = BackgroundRgb ?? other.BackgroundRgb,
         Blinking = Blinking ?? other.Blinking,
         Bold = Bold ?? other.Bold,
         Dim = Dim ?? other.Dim,
         Foreground = Foreground ?? other.Foreground,
+        Foreground256 = Foreground256 ?? other.Foreground256,
+        ForegroundRgb = ForegroundRgb ?? other.ForegroundRgb,
         Hidden = Hidden ?? other.Hidden,
         Inverse = Inverse ?? other.Inverse,
         Italics = Italics ?? other.Italics,
@@ -85,8 +96,6 @@ public record OutputFormat
         PaddingLeft = PaddingLeft ?? other.PaddingLeft,
         PaddingRight = PaddingRight ?? other.PaddingRight,
         ResetAllAfter = ResetAllAfter ?? other.ResetAllAfter,
-        SimpleBackground = SimpleBackground ?? other.SimpleBackground,
-        SimpleForeground = SimpleForeground ?? other.SimpleForeground,
         StrikeThrough = StrikeThrough ?? other.StrikeThrough,
         Underline = Underline ?? other.Underline,
         Width = Width ?? other.Width,
@@ -136,22 +145,30 @@ public record OutputFormat
             args.Add(StrikeThroughArg.ToString());
         }
 
-        if (SimpleBackground is not null)
+        if (Background is not null)
         {
-            args.Add($"{BackgroundArg};{C256Arg};{SimpleBackground}");
+            args.Add(Background.Value.ToBackgroundInt().ToString());
         }
-        else if (Background is not null)
+        else if (Background256 is not null)
         {
-            args.Add($"{BackgroundArg};{RgbArg};{Background.Red};{Background.Green};{Background.Blue}");
+            args.Add($"{Background256Args};{Background256}");
+        }
+        else if (BackgroundRgb is not null)
+        {
+            args.Add($"{BackgroundRgbArgs};{BackgroundRgb}");
         }
 
-        if (SimpleForeground is not null)
+        if (Foreground is not null)
         {
-            args.Add($"{ForegroundArg};{C256Arg};{SimpleForeground}");
+            args.Add(Foreground.Value.ToForegroundInt().ToString());
         }
-        else if (Foreground is not null)
+        else if (Foreground256 is not null)
         {
-            args.Add($"{ForegroundArg};{RgbArg};{Foreground.Red};{Foreground.Green};{Foreground.Blue}");
+            args.Add($"{Foreground256Args};{Foreground256}");
+        }
+        else if (ForegroundRgb is not null)
+        {
+            args.Add($"{ForegroundRgbArgs};{ForegroundRgb}");
         }
 
         return GetAnsiString(args.ToArray());
@@ -229,10 +246,10 @@ public record OutputFormat
     private static string Pad(int count) => new(' ', count);
 
     // Colors
-    private const int BackgroundArg = 48;
-    private const int ForegroundArg = 38;
-    private const int C256Arg = 5;
-    private const int RgbArg = 2;
+    private const string ForegroundRgbArgs = $"38;2";
+    private const string Foreground256Args = $"38;5";
+    private const string BackgroundRgbArgs = $"48;2";
+    private const string Background256Args = $"48;5";
 
     // Styling
     private const int BoldArg = 1;
