@@ -3,11 +3,13 @@ namespace Fansi;
 public record OutputFormat
 {
     public bool? Bold { get; init; }
+    public bool? Dim { get; init; }
     public bool? Italics { get; init; }
-    public bool? Inverse { get; init; }
     public bool? Underline { get; init; }
-    public bool? StrikeThrough { get; init; }
     public bool? Blinking { get; init; }
+    public bool? Inverse { get; init; }
+    public bool? Hidden { get; init; }
+    public bool? StrikeThrough { get; init; }
 
     public int? Width { get; init; }
     public TextAlignment? Alignment { get; init; }
@@ -55,7 +57,9 @@ public record OutputFormat
         Background = Background ?? other.Background,
         Blinking = Blinking ?? other.Blinking,
         Bold = Bold ?? other.Bold,
+        Dim = Dim ?? other.Dim,
         Foreground = Foreground ?? other.Foreground,
+        Hidden = Hidden ?? other.Hidden,
         Inverse = Inverse ?? other.Inverse,
         Italics = Italics ?? other.Italics,
         Padding = Padding ?? other.Padding,
@@ -78,6 +82,11 @@ public record OutputFormat
             args.Add(BoldArg.ToString());
         }
 
+        if (Dim ?? false)
+        {
+            args.Add(DimArg.ToString());
+        }
+
         if (Italics ?? false)
         {
             args.Add(ItalicsArg.ToString());
@@ -93,14 +102,19 @@ public record OutputFormat
             args.Add(BlinkingArg.ToString());
         }
 
-        if (StrikeThrough ?? false)
-        {
-            args.Add(StrikeThroughArg.ToString());
-        }
-
         if (Inverse ?? false)
         {
             args.Add(InverseArg.ToString());
+        }
+
+        if (Hidden ?? false)
+        {
+            args.Add(HiddenArg.ToString());
+        }
+
+        if (StrikeThrough ?? false)
+        {
+            args.Add(StrikeThroughArg.ToString());
         }
 
         if (SimpleBackground is not null)
@@ -178,10 +192,12 @@ public record OutputFormat
 
     // Styling
     private const int BoldArg = 1;
+    private const int DimArg = 2;
     private const int ItalicsArg = 3;
     private const int UnderlineArg = 4;
     private const int BlinkingArg = 5;
     private const int InverseArg = 7;
+    private const int HiddenArg = 8;
     private const int StrikeThroughArg = 9;
 
     // Common
