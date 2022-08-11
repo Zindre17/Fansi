@@ -195,7 +195,7 @@ public record OutputFormat
 
     private string GetLeftAligned(string text)
     {
-        var leftPad = Padding ?? PaddingLeft ?? 0;
+        var leftPad = PaddingLeft ?? Padding ?? 0;
         if (Width is not null && text.Length > Width)
         {
             text = Truncate(text, Width.Value - leftPad, AddEllipsisToOverflow ?? true);
@@ -207,7 +207,7 @@ public record OutputFormat
 
     private string GetRightAligned(string text)
     {
-        var rightPad = Padding ?? PaddingRight ?? 0;
+        var rightPad = PaddingRight ?? Padding ?? 0;
         if (Width is not null && text.Length > Width)
         {
             text = Truncate(text, Width.Value - rightPad, AddEllipsisToOverflow ?? true);
