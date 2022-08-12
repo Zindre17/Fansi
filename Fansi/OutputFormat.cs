@@ -126,7 +126,7 @@ public record OutputFormat
     /// <remarks>
     ///     Overrides <see cref="ForegroundRgb" />.
     /// </remarks>
-    public int? Foreground256 { get; init; }
+    public byte? Foreground256 { get; init; }
 
     /// <summary>
     ///     Sets foreground (text) color to any 24-bit RGB color.
@@ -148,7 +148,7 @@ public record OutputFormat
     /// <remarks>
     ///     Overrides <see cref="BackgroundRgb" />.
     /// </remarks>
-    public int? Background256 { get; init; }
+    public byte? Background256 { get; init; }
 
     /// <summary>
     ///     Sets backgrund color to any 24-bit RGB color.
@@ -206,11 +206,6 @@ public record OutputFormat
                 case TextAlignment.Right when (Padding ?? PaddingRight ?? 0) >= Width:
                     throw new InvalidOperationException("Width must be greater than right padding.");
             };
-        }
-
-        if (Foreground256 > 255 || Background256 > 256)
-        {
-            throw new InvalidOperationException("Foreground256 and Background256 can only be in the range 0 through 255 (8-bit).");
         }
 
         var options = GetAnsiOptionsString();
