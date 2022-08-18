@@ -14,7 +14,7 @@ public class ConsoleRow : IPrintable
 
     public OutputFormat CommonFormat { get; set; } = new();
 
-    public void Apply(OutputFormat format)
+    public void EnrichWith(OutputFormat format)
     {
         CommonFormat = CommonFormat.EnrichWith(format);
     }
@@ -32,7 +32,7 @@ public class ConsoleRow : IPrintable
             {
                 throw new ArgumentException("Must be between 0 and 1.", nameof(widthRatio));
             }
-            segment.Apply(new() { Width = (int)Math.Round(maxWidth * widthRatio.Value) });
+            segment.EnrichWith(new() { Width = (int)Math.Round(maxWidth * widthRatio.Value) });
         }
 
         var segmentWidth = segment.CalculateWidth();
@@ -58,7 +58,7 @@ public class ConsoleRow : IPrintable
         }
 
         currentWidth = maxWidth;
-        row.Apply(new() { Width = maxWidth });
+        row.EnrichWith(new() { Width = maxWidth });
 
         segments.Add(row);
     }

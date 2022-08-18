@@ -22,7 +22,7 @@ public class ConsoleArea : IPrintable
 
     public OutputFormat CommonFormat { get; set; } = new();
 
-    public void Apply(OutputFormat format)
+    public void EnrichWith(OutputFormat format)
     {
         CommonFormat = CommonFormat.EnrichWith(format);
     }

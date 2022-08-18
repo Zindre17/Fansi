@@ -12,7 +12,7 @@ public class ConsoleOutput : IPrintable
 
     public OutputFormat Format { get; set; }
 
-    public void Apply(OutputFormat format)
+    public void EnrichWith(OutputFormat format)
     {
         Format = Format.EnrichWith(format);
     }
