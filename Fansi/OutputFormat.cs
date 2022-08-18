@@ -226,6 +226,17 @@ public record OutputFormat
     }
 
     /// <summary>
+    ///     Format the given text, append a newline character and write it to console.
+    /// </summary>
+    /// <param name="text">
+    ///     The text to format.
+    /// </param>
+    public void PrintLine(string text)
+    {
+        Console.WriteLine(ApplyToText(text));
+    }
+
+    /// <summary>
     ///     Combine two formats by creating a copy of this, 
     ///     and applying any properties of the other that are not explicitly set in this.
     /// </summary>
