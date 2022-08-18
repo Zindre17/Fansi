@@ -14,7 +14,7 @@ public class ConsoleOutput : IPrintable
 
     public void Apply(OutputFormat format)
     {
-        Format = Format.Apply(format);
+        Format = Format.EnrichWith(format);
     }
 
     public int CalculateWidth()
@@ -30,7 +30,7 @@ public class ConsoleOutput : IPrintable
         }
         else
         {
-            Format.Apply(format).Print(Text);
+            Format.EnrichWith(format).Print(Text);
         }
     }
 

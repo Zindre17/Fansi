@@ -16,7 +16,7 @@ public class ConsoleRow : IPrintable
 
     public void Apply(OutputFormat format)
     {
-        CommonFormat = CommonFormat.Apply(format);
+        CommonFormat = CommonFormat.EnrichWith(format);
     }
 
     public void AddSegment(string text, OutputFormat? format = null, double? widthRatio = null)
@@ -65,7 +65,7 @@ public class ConsoleRow : IPrintable
 
     public void Print(OutputFormat? format = null)
     {
-        var common = CommonFormat.Apply(format ?? new());
+        var common = CommonFormat.EnrichWith(format ?? new());
         foreach (var segment in segments)
         {
             segment.Print(common);

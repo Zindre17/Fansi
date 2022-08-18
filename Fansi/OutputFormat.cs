@@ -246,7 +246,7 @@ public record OutputFormat
     /// <returns>
     ///     A combination of both formats, in a new instance.
     /// </returns>
-    public OutputFormat Apply(OutputFormat other) => this with
+    public OutputFormat EnrichWith(OutputFormat other) => this with
     {
         Alignment = Alignment ?? other.Alignment,
         AddEllipsisToOverflow = AddEllipsisToOverflow ?? other.AddEllipsisToOverflow,

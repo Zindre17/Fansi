@@ -82,7 +82,7 @@ public class PokemonConsoleArea : ConsoleArea
 
     private static OutputFormat GetTypeFormat(string type)
     {
-        return typeStyle.Apply(new() { BackgroundRgb = TranslateTypeToColor(type) });
+        return typeStyle.EnrichWith(new() { BackgroundRgb = TranslateTypeToColor(type) });
     }
 
     private readonly static OutputFormat typeStyle = new()

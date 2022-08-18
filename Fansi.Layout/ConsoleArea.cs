@@ -24,7 +24,7 @@ public class ConsoleArea : IPrintable
 
     public void Apply(OutputFormat format)
     {
-        CommonFormat = CommonFormat.Apply(format);
+        CommonFormat = CommonFormat.EnrichWith(format);
     }
 
     public ConsoleRow AddNewRow()
@@ -46,7 +46,7 @@ public class ConsoleArea : IPrintable
 
     public void Print(OutputFormat? format = null)
     {
-        var combined = CommonFormat.Apply(format ?? new());
+        var combined = CommonFormat.EnrichWith(format ?? new());
         foreach (var line in lines)
         {
             line.Print(combined);
@@ -56,7 +56,7 @@ public class ConsoleArea : IPrintable
 
     public void PrintRow(int index, OutputFormat? format = null)
     {
-        var combined = CommonFormat.Apply(format ?? new());
+        var combined = CommonFormat.EnrichWith(format ?? new());
         this[index].Print(combined);
     }
 }
