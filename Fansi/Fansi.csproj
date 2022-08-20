@@ -7,6 +7,15 @@
     <RootNamespace>Fansi</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Title>Fansi</Title>
+    <Description>Make fancy console output, easily.</Description>
+    <Authors>Zindre</Authors>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="./Readme.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 </Project>
