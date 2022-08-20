@@ -13,6 +13,8 @@
     <Title>Fansi</Title>
     <Description>Make fancy console output, easily.</Description>
     <Authors>Zindre</Authors>
+    <RepositoryUrl>https://github.com/Zindre17/Fansi</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
