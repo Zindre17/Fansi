@@ -210,7 +210,9 @@ public record OutputFormat
 
         var options = GetAnsiOptionsString();
         var alignedText = GetAlignedText(text);
-        var reset = string.IsNullOrEmpty(options) ? "" : GetAnsiResetString();
+        var reset = (string.IsNullOrEmpty(options) || !(ResetAllAfter ?? true))
+            ? ""
+            : GetAnsiResetString();
         return $"{options}{alignedText}{reset}";
     }
 
@@ -234,6 +236,27 @@ public record OutputFormat
     public void PrintLine(string text)
     {
         Console.WriteLine(ApplyToText(text));
+    }
+
+    /// <summary>
+    ///     Applies the style to the console, such that any print will have this style until another style
+    ///     is applied or all styling is reset (<see cref="Stop" />).
+    /// </summary>
+    /// <remarks>
+    ///     Note that this does not apply formatting (alignment, padding, etc.),
+    ///     only style (e.g. color and font style).
+    /// </remarks>
+    public void Start()
+    {
+        Console.Write(GetAnsiOptionsString());
+    }
+
+    /// <summary>
+    ///     Reset all styling in the console back to default. 
+    /// </summary>
+    public void Stop()
+    {
+        Console.WriteLine(GetAnsiResetString());
     }
 
     /// <summary>
@@ -344,9 +367,9 @@ public record OutputFormat
         return GetAnsiString(args.ToArray());
     }
 
-    private string GetAnsiResetString()
+    private static string GetAnsiResetString()
     {
-        return ResetAllAfter ?? true ? GetAnsiString(ResetAllArg.ToString()) : "";
+        return GetAnsiString(ResetAllArg.ToString());
     }
 
     private static string GetAnsiString(params string[] args)
