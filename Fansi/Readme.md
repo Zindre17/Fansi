@@ -29,7 +29,10 @@ inverse.PrintLine("!");
 ```
 Console output:
 
-<img src=Images/hello-fansi-world.png>
+![Hello fansi world!][1]
+
+[1]: https://raw.githubusercontent.com/Zindre17/Fansi/main/Fansi/Images/hello-fansi-world.png
+[1]: Images/hello-fansi-world.png
 
 ---
 
@@ -62,7 +65,10 @@ for (int i = 1; i <= rows.Length; i++)
 ```
 Console output:
 
-<img src=Images/format-and-alignment.png>
+![Aligned and sized output][2]
+
+[2]: https://raw.githubusercontent.com/Zindre17/Fansi/main/Fansi/Images/format-and-alignment.png
+[2]: Images/format-and-alignment.png
 
 ---
 
@@ -108,7 +114,11 @@ for (var i = 0; i < items.Length; i++)
 ```
 Console output:
 
-<img src=Images/selector.png>
+![Styled list selection][3]
+
+[3]: https://raw.githubusercontent.com/Zindre17/Fansi/main/Fansi/Images/selector.png
+[3]: Images/selector.png
+
 
 
 ## How does it work?
