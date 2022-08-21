@@ -13,6 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2804D696
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fansi.Test", "Tests\Fansi\Fansi.Test.csproj", "{E0F689B9-6018-4D1D-83FC-D4C08F4D0FF6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{A27D16EE-CAA7-41C4-BBA8-03E275E7470E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FansiDemo", "Examples\FansiDemo\FansiDemo.csproj", "{9A0D6E71-BC04-4044-B191-ABACCB50948B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,8 +42,13 @@ Global
 		{E0F689B9-6018-4D1D-83FC-D4C08F4D0FF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0F689B9-6018-4D1D-83FC-D4C08F4D0FF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0F689B9-6018-4D1D-83FC-D4C08F4D0FF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A0D6E71-BC04-4044-B191-ABACCB50948B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A0D6E71-BC04-4044-B191-ABACCB50948B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A0D6E71-BC04-4044-B191-ABACCB50948B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A0D6E71-BC04-4044-B191-ABACCB50948B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E0F689B9-6018-4D1D-83FC-D4C08F4D0FF6} = {2804D696-5428-4327-B067-3983D3E9A0E1}
+		{9A0D6E71-BC04-4044-B191-ABACCB50948B} = {A27D16EE-CAA7-41C4-BBA8-03E275E7470E}
 	EndGlobalSection
 EndGlobal
