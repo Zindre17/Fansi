@@ -122,5 +122,5 @@ Console output:
 
 
 ## How does it work?
-It make it possible to define a format, which 
+It makes it possible to define a format, which 
 mostly uses ANSI escape sequences to style output, but also has the capability to align and pad the text.
